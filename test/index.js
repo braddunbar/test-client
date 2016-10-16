@@ -238,3 +238,12 @@ test('send a json body', function *(assert) {
   const response = yield client.post('/x').send({x: 1})
   assert.is(response.status, 200)
 })
+
+test('set request type', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    assert.is(request.headers['content-type'], 'application/json; charset=utf-8')
+    response.end()
+  }))
+  const response = yield client.post('/x').type('json').send()
+  assert.is(response.status, 200)
+})

@@ -1,6 +1,7 @@
 'use strict'
 
 const http = require('http')
+const mimeTypes = require('mime-types')
 const Response = require('./response')
 
 class Request {
@@ -58,6 +59,11 @@ class Request {
 
   set (key, value) {
     this.headers[key] = value
+    return this
+  }
+
+  type (type) {
+    this.set('content-type', mimeTypes.contentType(type))
     return this
   }
 
