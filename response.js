@@ -19,19 +19,15 @@ class Response {
   constructor (status, headers, body) {
     this.status = status
     this.headers = headers
-    this.body = /json/.test(this.headers['content-type'])
-      ? JSON.parse(body)
-      : body
+    this.body = body
   }
 
   expect (...args) {
     if (typeof args[0] === 'number') {
       this.expectStatus(args[0])
       if (args.length > 1) this.expectBody(args[1])
-
     } else if (args.length > 1) {
       this.expectHeader(args[0], args[1])
-
     } else if (args.length > 0) {
       this.expectBody(args[0])
     }

@@ -11,6 +11,25 @@ const listen = (app) => new Promise((resolve, reject) => {
   server.on('error', reject)
 })
 
+const send = (options, body) => new Promise((resolve, reject) => {
+  const request = http.request(options)
+
+  request.on('response', (response) => {
+    let body = ''
+    const {headers, statusCode} = response
+    response.on('data', (chunk) => { body += chunk.toString() })
+    response.on('end', () => {
+      if (/json/.test(headers['content-type'])) {
+        try { body = JSON.parse(body) } catch (error) { reject(error) }
+      }
+      resolve(new Response(statusCode, headers, body))
+    })
+  })
+
+  request.on('error', reject)
+  request.end(body)
+})
+
 class Request {
 
   constructor (app, jar, path, method) {
@@ -32,36 +51,29 @@ class Request {
     const access = new CookieAccessInfo('localhost', '/')
     this.headers.cookie = this.jar.getCookies(access).toValueString()
 
-    return listen(this.app).then((server) => new Promise((resolve, reject) => {
+    return listen(this.app).then((server) => {
       const {family, port} = server.address()
-      const request = http.request({
+
+      return send({
         family: family === 'IPv6' ? 6 : 4,
         headers: this.headers,
         method: this.method,
         path: this.path,
         port
-      })
+      }, body)
 
-      request.on('response', (response) => {
-        let body = ''
-        const {headers, statusCode} = response
-
-        response.setEncoding('utf8')
-        response.on('data', (chunk) => body += chunk.toString())
-        response.on('end', () => {
-          server.close()
-          this.jar.setCookies(headers['set-cookie'] || [], 'localhost', '/')
-          resolve(new Response(statusCode, headers, body))
-        })
-      })
-
-      request.on('error', (error) => {
+      .then((response) => {
         server.close()
-        reject(error)
+        const cookies = response.headers['set-cookie']
+        this.jar.setCookies(cookies || [], 'localhost', '/')
+        return response
       })
 
-      request.end(body)
-    }))
+      .catch((error) => {
+        server.close()
+        throw error
+      })
+    })
   }
 
   set (key, value) {

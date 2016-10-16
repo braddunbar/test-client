@@ -8,7 +8,7 @@ class Client {
 
   constructor (app) {
     this.app = app
-    this.jar = new CookieJar
+    this.jar = new CookieJar()
   }
 
   request (path, method) {

@@ -4,7 +4,7 @@
   "description": "HTTP client for nodejs tests",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/index.js | faucet"
+    "test": "standard --fix && tape test/index.js | faucet"
   },
   "author": "Brad Dunbar <dunbarb2@gmail.com> (http://braddunbar.net/)",
   "license": "ISC",

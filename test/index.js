@@ -45,7 +45,7 @@ test('expect mismatched header', function *(assert) {
 })
 
 test('expect matching header', function *(assert) {
-  const response = new Response(200, {accept: 'application/json'}, '')
+  const response = new Response(200, {accept: 'application/json'}, {})
   try {
     response.expect('accept', 'application/json')
   } catch (error) {
@@ -54,7 +54,7 @@ test('expect matching header', function *(assert) {
 })
 
 test('expect mixed case header', function *(assert) {
-  const response = new Response(200, {accept: 'application/json'}, '')
+  const response = new Response(200, {accept: 'application/json'}, {})
   try {
     response.expect('Accept', 'application/json')
   } catch (error) {
@@ -140,7 +140,7 @@ test('expect status and mismatched regexp body', function *(assert) {
 })
 
 test('expect matching regexp header', function *(assert) {
-  const response = new Response(200, {accept: 'application/json'}, 'x')
+  const response = new Response(200, {accept: 'application/json'}, {})
   try {
     response.expect('accept', /json/)
   } catch (error) {
@@ -149,7 +149,7 @@ test('expect matching regexp header', function *(assert) {
 })
 
 test('expect mismatched regexp header', function *(assert) {
-  const response = new Response(200, {accept: 'text/html'}, 'x')
+  const response = new Response(200, {accept: 'text/html'}, '')
   try {
     response.expect('accept', /json/)
     assert.fail('mismatch should throw')
@@ -159,7 +159,7 @@ test('expect mismatched regexp header', function *(assert) {
 })
 
 test('expect matching json body', function *(assert) {
-  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
+  const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
   try {
     response.expect({x: 1})
   } catch (error) {
@@ -168,21 +168,25 @@ test('expect matching json body', function *(assert) {
 })
 
 test('expect mismatched json body', function *(assert) {
-  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
+  const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
   try {
     response.expect({x: 2})
     assert.fail('mismatch should throw')
   } catch (error) {
-    assert.is(error.message, "expected { x: 2 }, got { x: 1 }")
+    assert.is(error.message, 'expected { x: 2 }, got { x: 1 }')
   }
 })
 
-test('expect json body with invalid response', function *(assert) {
+test('json body with invalid response', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    response.setHeader('content-type', 'application/json')
+    response.end('invalid')
+  }))
   try {
-  new Response(200, {'content-type': 'application/json'}, 'invalid')
-    assert.fail('mismatch should throw')
+    yield client.get('/').send()
+    assert.fail('invalid json should throw')
   } catch (error) {
-    assert.is(error.message, "Unexpected token i in JSON at position 0")
+    assert.is(error.message, 'Unexpected token i in JSON at position 0')
   }
 })
 
@@ -215,7 +219,7 @@ test('set a header', function *(assert) {
 test('send a body', function *(assert) {
   const client = new Client(http.createServer((request, response) => {
     let body = ''
-    request.on('data', (chunk) => body += chunk.toString())
+    request.on('data', (chunk) => { body += chunk.toString() })
     request.on('end', () => {
       assert.is(body, 'test')
       response.end()
@@ -228,7 +232,7 @@ test('send a body', function *(assert) {
 test('send a json body', function *(assert) {
   const client = new Client(http.createServer((request, response) => {
     let body = ''
-    request.on('data', (chunk) => body += chunk.toString())
+    request.on('data', (chunk) => { body += chunk.toString() })
     request.on('end', () => {
       assert.is(body, '{"x":1}')
       response.end()
@@ -246,11 +250,6 @@ test('set request type', function *(assert) {
   }))
   const response = yield client.post('/x').type('json').send()
   assert.is(response.status, 200)
-})
-
-test('parse json body', function *(assert) {
-  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
-  assert.is(response.body.x, 1)
 })
 
 test('remember cookies', function *(assert) {
