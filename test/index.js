@@ -234,6 +234,7 @@ test('send a json body', function *(assert) {
       assert.is(body, '{"x":1}')
       response.end()
     })
+    assert.is(request.headers['content-type'], 'application/json; charset=utf-8')
   }))
   const response = yield client.post('/x').send({x: 1})
   assert.is(response.status, 200)

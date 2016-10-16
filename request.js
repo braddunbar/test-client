@@ -22,6 +22,11 @@ class Request {
   }
 
   send (body) {
+    if (body !== undefined && typeof body !== 'string') {
+      this.type('json')
+      body = JSON.stringify(body)
+    }
+
     return this.listen().then((server) => new Promise((resolve, reject) => {
       const {family, port} = server.address()
       const request = http.request({
@@ -48,10 +53,6 @@ class Request {
         server.close()
         reject(error)
       })
-
-      if (body !== undefined && typeof body !== 'string') {
-        body = JSON.stringify(body)
-      }
 
       request.end(body)
     }))
