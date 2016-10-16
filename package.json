@@ -15,6 +15,7 @@
     "tape": "4.6.2"
   },
   "dependencies": {
+    "cookiejar": "2.1.0",
     "mime-types": "2.1.12"
   }
 }

@@ -3,11 +3,13 @@
 const http = require('http')
 const mimeTypes = require('mime-types')
 const Response = require('./response')
+const {CookieAccessInfo} = require('cookiejar')
 
 class Request {
 
-  constructor (app, path, method) {
+  constructor (app, jar, path, method) {
     this.app = app
+    this.jar = jar
     this.path = path
     this.method = method
     this.headers = {}
@@ -27,6 +29,9 @@ class Request {
       body = JSON.stringify(body)
     }
 
+    const access = new CookieAccessInfo('localhost', '/')
+    this.headers.cookie = this.jar.getCookies(access).toValueString()
+
     return this.listen().then((server) => new Promise((resolve, reject) => {
       const {family, port} = server.address()
       const request = http.request({
@@ -45,6 +50,7 @@ class Request {
         response.on('data', (chunk) => body += chunk.toString())
         response.on('end', () => {
           server.close()
+          this.jar.setCookies(headers['set-cookie'] || [], 'localhost', '/')
           resolve(new Response(statusCode, headers, body))
         })
       })

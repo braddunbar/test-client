@@ -252,3 +252,22 @@ test('parse json body', function *(assert) {
   const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
   assert.is(response.body.x, 1)
 })
+
+test('remember cookies', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    switch (request.url) {
+      case '/get':
+        assert.is(request.headers.cookie, 'x=1')
+        break
+
+      case '/set':
+        response.setHeader('set-cookie', 'x=1')
+        break
+    }
+    response.end()
+  }))
+  const set = yield client.get('/set').send()
+  set.expect(200)
+  const get = yield client.get('/get').send()
+  get.expect(200)
+})
