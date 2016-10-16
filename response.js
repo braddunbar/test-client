@@ -19,7 +19,9 @@ class Response {
   constructor (status, headers, body) {
     this.status = status
     this.headers = headers
-    this.body = body
+    this.body = /json/.test(this.headers['content-type'])
+      ? JSON.parse(body)
+      : body
   }
 
   expect (...args) {
@@ -41,13 +43,9 @@ class Response {
     if (body instanceof RegExp) {
       const message = inspect`expected ${this.body} to match ${body}`
       assert.ok(body.test(this.body), message)
-    } else if (typeof body === 'string') {
-      const message = inspect`expected ${body}, got ${this.body}`
-      assert.strictEqual(body, this.body, message)
     } else {
-      const parsed = JSON.parse(this.body)
-      const message = inspect`expected ${body}, got ${parsed}`
-      assert.deepStrictEqual(body, parsed, message)
+      const message = inspect`expected ${body}, got ${this.body}`
+      assert.deepStrictEqual(body, this.body, message)
     }
   }
 

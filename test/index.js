@@ -159,7 +159,7 @@ test('expect mismatched regexp header', function *(assert) {
 })
 
 test('expect matching json body', function *(assert) {
-  const response = new Response(200, {}, '{"x":1}')
+  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
   try {
     response.expect({x: 1})
   } catch (error) {
@@ -168,7 +168,7 @@ test('expect matching json body', function *(assert) {
 })
 
 test('expect mismatched json body', function *(assert) {
-  const response = new Response(200, {}, '{"x":1}')
+  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
   try {
     response.expect({x: 2})
     assert.fail('mismatch should throw')
@@ -178,9 +178,8 @@ test('expect mismatched json body', function *(assert) {
 })
 
 test('expect json body with invalid response', function *(assert) {
-  const response = new Response(200, {}, 'invalid')
   try {
-    response.expect({x: 2})
+  new Response(200, {'content-type': 'application/json'}, 'invalid')
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, "Unexpected token i in JSON at position 0")
@@ -247,4 +246,9 @@ test('set request type', function *(assert) {
   }))
   const response = yield client.post('/x').type('json').send()
   assert.is(response.status, 200)
+})
+
+test('parse json body', function *(assert) {
+  const response = new Response(200, {'content-type': 'application/json'}, '{"x":1}')
+  assert.is(response.body.x, 1)
 })
