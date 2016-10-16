@@ -5,6 +5,12 @@ const mimeTypes = require('mime-types')
 const Response = require('./response')
 const {CookieAccessInfo} = require('cookiejar')
 
+const listen = (app) => new Promise((resolve, reject) => {
+  const server = app.listen()
+  server.on('listening', () => resolve(server))
+  server.on('error', reject)
+})
+
 class Request {
 
   constructor (app, jar, path, method) {
@@ -15,24 +21,18 @@ class Request {
     this.headers = {}
   }
 
-  listen () {
-    return new Promise((resolve, reject) => {
-      const server = this.app.listen()
-      server.on('listening', () => resolve(server))
-      server.on('error', reject)
-    })
-  }
-
   send (body) {
+    // JSON encode the body if appropriate.
     if (body !== undefined && typeof body !== 'string') {
       this.type('json')
       body = JSON.stringify(body)
     }
 
+    // Send all the cookies in the jar.
     const access = new CookieAccessInfo('localhost', '/')
     this.headers.cookie = this.jar.getCookies(access).toValueString()
 
-    return this.listen().then((server) => new Promise((resolve, reject) => {
+    return listen(this.app).then((server) => new Promise((resolve, reject) => {
       const {family, port} = server.address()
       const request = http.request({
         family: family === 'IPv6' ? 6 : 4,
