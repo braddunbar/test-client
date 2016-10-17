@@ -4,6 +4,7 @@ const http = require('http')
 const test = require('./test')
 const Client = require('../')
 const Response = require('../response')
+const {Readable} = require('stream')
 
 test('expect matching status', function *(assert) {
   const response = new Response(200, {}, '')
@@ -249,6 +250,26 @@ test('set request type', function *(assert) {
     response.end()
   }))
   const response = yield client.post('/x').type('json').send()
+  assert.is(response.status, 200)
+})
+
+test('send stream body', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    let body = ''
+    request.on('data', (chunk) => { body += chunk.toString() })
+    request.on('end', () => {
+      assert.is(body, 'xyz')
+      response.end()
+    })
+  }))
+  const stream = new Readable()
+  const request = client.post('/').send(stream)
+  stream.push('x')
+  stream.push('y')
+  stream.push('z')
+  stream.push(null)
+
+  const response = yield request
   assert.is(response.status, 200)
 })
 

@@ -1,6 +1,7 @@
 'use strict'
 
 const http = require('http')
+const Stream = require('stream')
 const mimeTypes = require('mime-types')
 const Response = require('./response')
 const {CookieAccessInfo} = require('cookiejar')
@@ -29,7 +30,7 @@ const send = (options, body) => new Promise((resolve, reject) => {
     })
   })
   request.on('error', reject)
-  request.end(body)
+  body instanceof Stream ? body.pipe(request) : request.end(body)
 })
 
 class Request {
@@ -44,7 +45,7 @@ class Request {
 
   send (body) {
     // JSON encode the body if appropriate.
-    if (body !== undefined && typeof body !== 'string') {
+    if (body != null && !(body instanceof Stream) && typeof body !== 'string') {
       this.type('json')
       body = JSON.stringify(body)
     }
