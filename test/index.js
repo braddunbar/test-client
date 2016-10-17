@@ -217,6 +217,20 @@ test('set a header', function *(assert) {
   assert.is(response.body, 'x')
 })
 
+test('#set accepts an object', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    assert.is(request.url, '/x')
+    assert.is(request.headers.accept, 'application/json')
+    response.end('x')
+  }))
+  const response = yield client
+    .get('/x')
+    .set({accept: 'application/json'})
+    .send()
+  assert.is(response.status, 200)
+  assert.is(response.body, 'x')
+})
+
 test('send a body', function *(assert) {
   const client = new Client(http.createServer((request, response) => {
     let body = ''

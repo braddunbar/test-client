@@ -82,8 +82,14 @@ class Request {
     })
   }
 
-  set (key, value) {
-    this.headers[key] = value
+  set (...args) {
+    if (args.length === 2) {
+      const [key, value] = args
+      this.headers[key] = value
+    } else if (args.length === 1) {
+      const [headers] = args
+      Object.assign(this.headers, headers)
+    }
     return this
   }
 
