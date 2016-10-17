@@ -12,20 +12,22 @@ const listen = (app) => new Promise((resolve, reject) => {
 })
 
 const send = (options, body) => new Promise((resolve, reject) => {
-  const request = http.request(options)
-
-  request.on('response', (response) => {
+  const request = http.request(options, (response) => {
     let body = ''
     const {headers, statusCode} = response
-    response.on('data', (chunk) => { body += chunk.toString() })
+
+    response.on('data', (chunk) => {
+      body += chunk.toString()
+    })
+
     response.on('end', () => {
+      // If the body is JSON, go ahead and parse it.
       if (/json/.test(headers['content-type'])) {
         try { body = JSON.parse(body) } catch (error) { reject(error) }
       }
       resolve(new Response(statusCode, headers, body))
     })
   })
-
   request.on('error', reject)
   request.end(body)
 })
@@ -64,8 +66,11 @@ class Request {
 
       .then((response) => {
         server.close()
+
+        // Save cookies for subsequent requests.
         const cookies = response.headers['set-cookie']
         this.jar.setCookies(cookies || [], 'localhost', '/')
+
         return response
       })
 
