@@ -1,6 +1,6 @@
 {
   "name": "test-client",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "HTTP assertions for node",
   "homepage": "https://github.com/braddunbar/test-client",
   "bugs": {
