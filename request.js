@@ -93,6 +93,11 @@ class Request {
     return this
   }
 
+  accept (type) {
+    this.set('accept', mimeTypes.contentType(type))
+    return this
+  }
+
   type (type) {
     this.set('content-type', mimeTypes.contentType(type))
     return this

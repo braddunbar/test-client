@@ -267,6 +267,15 @@ test('set request type', function *(assert) {
   assert.is(response.status, 200)
 })
 
+test('set request accept', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    assert.is(request.headers['accept'], 'application/json; charset=utf-8')
+    response.end()
+  }))
+  const response = yield client.post('/').accept('json').send()
+  assert.is(response.status, 200)
+})
+
 test('send stream body', function *(assert) {
   const client = new Client(http.createServer((request, response) => {
     let body = ''
