@@ -8,8 +8,7 @@ const inspect = (literals, ...values) => {
   let i = 0
   let result = ''
   for (const value of values) {
-    result += literals.raw[i++]
-    result += util.inspect(value)
+    result += literals.raw[i++] + util.inspect(value)
   }
   return result + literals.raw[i]
 }
