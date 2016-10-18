@@ -1,7 +1,16 @@
 {
   "name": "test-client",
   "version": "0.3.1",
-  "description": "HTTP client for nodejs tests",
+  "description": "HTTP assertions for node",
+  "homepage": "https://github.com/braddunbar/test-client",
+  "bugs": {
+    "url": "https://github.com/braddunbar/test-client/issues",
+    "email": "dunbarb2@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/braddunbar/test-client.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "standard --fix && tape test/index.js | faucet"
