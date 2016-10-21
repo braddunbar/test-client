@@ -21,20 +21,20 @@ class Response {
     this.body = body
   }
 
-  expect (...args) {
+  assert (...args) {
     if (typeof args[0] === 'number') {
-      this.expectStatus(args[0])
-      if (args.length > 1) this.expectBody(args[1])
+      this.assertStatus(args[0])
+      if (args.length > 1) this.assertBody(args[1])
     } else if (args.length > 1) {
-      this.expectHeader(args[0], args[1])
+      this.assertHeader(args[0], args[1])
     } else if (args.length > 0) {
-      this.expectBody(args[0])
+      this.assertBody(args[0])
     }
 
     return this
   }
 
-  expectBody (body) {
+  assertBody (body) {
     if (body instanceof RegExp) {
       const message = inspect`expected ${this.body} to match ${body}`
       assert.ok(body.test(this.body), message)
@@ -44,12 +44,12 @@ class Response {
     }
   }
 
-  expectStatus (status) {
+  assertStatus (status) {
     const message = inspect`expected ${status}, got ${this.status}`
     assert.strictEqual(status, this.status, message)
   }
 
-  expectHeader (key, value) {
+  assertHeader (key, value) {
     const actual = this.headers[key.toLowerCase()]
     if (value instanceof RegExp) {
       const message = inspect`expected ${key} of ${actual} to match ${value}`

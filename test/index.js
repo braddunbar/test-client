@@ -6,172 +6,172 @@ const Client = require('../')
 const Response = require('../response')
 const {Readable} = require('stream')
 
-test('expect matching status', function *(assert) {
+test('assert matching status', function *(assert) {
   const response = new Response(200, {}, '')
   try {
-    response.expect(200)
+    response.assert(200)
   } catch (error) {
     assert.fail('matching status should not throw')
   }
 })
 
-test('expect mismatched status', function *(assert) {
+test('assert mismatched status', function *(assert) {
   const response = new Response(200, {}, '')
   try {
-    response.expect(404)
+    response.assert(404)
     assert.fail('mismatched status should throw')
   } catch (error) {
     assert.is(error.message, 'expected 404, got 200')
   }
 })
 
-test('expect missing header', function *(assert) {
+test('assert missing header', function *(assert) {
   const response = new Response(200, {}, '')
   try {
-    response.expect('accept', 'application/json')
+    response.assert('accept', 'application/json')
     assert.fail('missing header should throw')
   } catch (error) {
     assert.is(error.message, "expected 'accept' header")
   }
 })
 
-test('expect mismatched header', function *(assert) {
+test('assert mismatched header', function *(assert) {
   const response = new Response(200, {accept: 'text/html'}, '')
   try {
-    response.expect('accept', 'application/json')
+    response.assert('accept', 'application/json')
     assert.fail('mismatched header should throw')
   } catch (error) {
     assert.is(error.message, "expected 'accept' of 'application/json', got 'text/html'")
   }
 })
 
-test('expect matching header', function *(assert) {
+test('assert matching header', function *(assert) {
   const response = new Response(200, {accept: 'application/json'}, {})
   try {
-    response.expect('accept', 'application/json')
+    response.assert('accept', 'application/json')
   } catch (error) {
     assert.fail('matching header should not throw')
   }
 })
 
-test('expect mixed case header', function *(assert) {
+test('assert mixed case header', function *(assert) {
   const response = new Response(200, {accept: 'application/json'}, {})
   try {
-    response.expect('Accept', 'application/json')
+    response.assert('Accept', 'application/json')
   } catch (error) {
     assert.fail('matching header should not throw')
   }
 })
 
-test('expect matching body', function *(assert) {
+test('assert matching body', function *(assert) {
   const response = new Response(200, {}, 'body')
   try {
-    response.expect('body')
+    response.assert('body')
   } catch (error) {
     assert.fail('matching body should not throw')
   }
 })
 
-test('expect mismatched body', function *(assert) {
+test('assert mismatched body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect('y')
+    response.assert('y')
     assert.fail('mismatched body should throw')
   } catch (error) {
     assert.is(error.message, "expected 'y', got 'x'")
   }
 })
 
-test('expect mismatched status and body', function *(assert) {
+test('assert mismatched status and body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(404, 'y')
+    response.assert(404, 'y')
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, 'expected 404, got 200')
   }
 })
 
-test('expect matching status, mismatched body', function *(assert) {
+test('assert matching status, mismatched body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(200, 'y')
+    response.assert(200, 'y')
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, "expected 'y', got 'x'")
   }
 })
 
-test('expect matching regexp body', function *(assert) {
+test('assert matching regexp body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(/x/)
+    response.assert(/x/)
   } catch (error) {
     assert.fail('matching should not throw')
   }
 })
 
-test('expect mismatched regexp body', function *(assert) {
+test('assert mismatched regexp body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(/y/)
+    response.assert(/y/)
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, "expected 'x' to match /y/")
   }
 })
 
-test('expect status and matching regexp body', function *(assert) {
+test('assert status and matching regexp body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(200, /x/)
+    response.assert(200, /x/)
   } catch (error) {
     assert.fail('matching should not throw')
   }
 })
 
-test('expect status and mismatched regexp body', function *(assert) {
+test('assert status and mismatched regexp body', function *(assert) {
   const response = new Response(200, {}, 'x')
   try {
-    response.expect(200, /y/)
+    response.assert(200, /y/)
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, "expected 'x' to match /y/")
   }
 })
 
-test('expect matching regexp header', function *(assert) {
+test('assert matching regexp header', function *(assert) {
   const response = new Response(200, {accept: 'application/json'}, {})
   try {
-    response.expect('accept', /json/)
+    response.assert('accept', /json/)
   } catch (error) {
     assert.fail('matching should not throw')
   }
 })
 
-test('expect mismatched regexp header', function *(assert) {
+test('assert mismatched regexp header', function *(assert) {
   const response = new Response(200, {accept: 'text/html'}, '')
   try {
-    response.expect('accept', /json/)
+    response.assert('accept', /json/)
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, "expected 'accept' of 'text/html' to match /json/")
   }
 })
 
-test('expect matching json body', function *(assert) {
+test('assert matching json body', function *(assert) {
   const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
   try {
-    response.expect({x: 1})
+    response.assert({x: 1})
   } catch (error) {
     assert.fail('matching should not throw')
   }
 })
 
-test('expect mismatched json body', function *(assert) {
+test('assert mismatched json body', function *(assert) {
   const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
   try {
-    response.expect({x: 2})
+    response.assert({x: 2})
     assert.fail('mismatch should throw')
   } catch (error) {
     assert.is(error.message, 'expected { x: 2 }, got { x: 1 }')
@@ -310,7 +310,7 @@ test('remember cookies', function *(assert) {
     response.end()
   }))
   const set = yield client.get('/set').send()
-  set.expect(200)
+  set.assert(200)
   const get = yield client.get('/get').send()
-  get.expect(200)
+  get.assert(200)
 })

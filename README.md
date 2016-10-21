@@ -26,8 +26,8 @@ co(function *() {
     .send({x: 1})
 
   response
-    .expect(200, {x: 2})
-    .expect('content-type', /json/)
+    .assert(200, {x: 2})
+    .assert('content-type', /json/)
 })
 ```
 
@@ -100,36 +100,36 @@ An object containing header values from the response.
 If the response is JSON as indicated by the `content-type`, the decoded
 response. Otherwise, the response string.
 
-### .expect(number)
+### .assert(number)
 
 Assert the HTTP status value. Returns the response.
 
-### .expect(string)
+### .assert(string)
 
 Assert the repsonse body value. Returns the response.
 
-### .expect(regexp)
+### .assert(regexp)
 
 Assert that the response body matches a RegExp. Returns the response.
 
-### .expect(object)
+### .assert(object)
 
 Assert the response body as a JSON object. Returns the response.
 
-### .expect(number, string)
+### .assert(number, string)
 
 Assert the HTTP status and response body value. Returns the response.
 
-### .expect(number, regexp)
+### .assert(number, regexp)
 
 Assert the HTTP status value and the response body matches a RegExp. Returns
 the response.
 
-### .expect(string, string)
+### .assert(string, string)
 
 Assert an HTTP header value. Returns the response.
 
-### .expect(string, regexp)
+### .assert(string, regexp)
 
 Assert an HTTP header matches a RegExp. Returns the response.
 
