@@ -55,7 +55,6 @@ class Response {
       const message = inspect`expected ${key} of ${actual} to match ${value}`
       assert.ok(value.test(actual), message)
     } else {
-      assert.notStrictEqual(actual, undefined, inspect`expected ${key} header`)
       assert.strictEqual(value, actual, inspect`expected ${key} of ${value}, got ${actual}`)
     }
   }

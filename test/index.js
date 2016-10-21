@@ -31,7 +31,7 @@ test('assert missing header', function *(assert) {
     response.assert('accept', 'application/json')
     assert.fail('missing header should throw')
   } catch (error) {
-    assert.is(error.message, "expected 'accept' header")
+    assert.is(error.message, "expected 'accept' of 'application/json', got undefined")
   }
 })
 
@@ -274,6 +274,28 @@ test('set request accept', function *(assert) {
   }))
   const response = yield client.post('/').accept('json').send()
   assert.is(response.status, 200)
+})
+
+test('assert header undefined mismatch', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    response.setHeader('content-security-policy', "default-src 'self'")
+    response.end()
+  }))
+  try {
+    const response = yield client.get('/').send()
+    response.assert('content-security-policy', undefined)
+    assert.fail('mismatched header should throw')
+  } catch (error) {
+    assert.is(error.message, "expected 'content-security-policy' of undefined, got 'default-src \\'self\\''")
+  }
+})
+
+test('assert header undefined match', function *(assert) {
+  const client = new Client(http.createServer((request, response) => {
+    response.end()
+  }))
+  const response = yield client.get('/').send()
+  response.assert('content-security-policy', undefined)
 })
 
 test('send stream body', function *(assert) {
