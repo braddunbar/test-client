@@ -1,7 +1,7 @@
 # test-client
 
-`test-client` is a small HTTP assertion library that uses promises, enabling
-tests to be written with[`co`][co] generators and `async`/`await`.
+`test-client` is a small HTTP assertion library that uses promises, allowing
+tests to be written with[`co`][co] generators or `async`/`await`.
 
 ```js
 'use strict'
@@ -30,6 +30,10 @@ co(function *() {
     .assert('content-type', /json/)
 })
 ```
+
+# Install
+
+`npm install test-client`
 
 # API
 
