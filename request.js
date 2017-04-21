@@ -43,7 +43,7 @@ class Request {
     this.headers = {}
   }
 
-  send (body) {
+  async send (body) {
     // JSON encode the body if appropriate.
     if (body != null && !(body instanceof Stream) && typeof body !== 'string') {
       this.type('json')
@@ -54,10 +54,11 @@ class Request {
     const access = new CookieAccessInfo('localhost', '/')
     this.headers.cookie = this.jar.getCookies(access).toValueString()
 
-    return listen(this.app).then((server) => {
-      const {family, port} = server.address()
+    const server = await listen(this.app)
 
-      return send({
+    try {
+      const {family, port} = server.address()
+      const response = await send({
         family: family === 'IPv6' ? 6 : 4,
         headers: this.headers,
         method: this.method,
@@ -65,21 +66,14 @@ class Request {
         port
       }, body)
 
-      .then((response) => {
-        server.close()
+      // Save cookies for subsequent requests.
+      const cookies = response.headers['set-cookie']
+      this.jar.setCookies(cookies || [], 'localhost', '/')
 
-        // Save cookies for subsequent requests.
-        const cookies = response.headers['set-cookie']
-        this.jar.setCookies(cookies || [], 'localhost', '/')
-
-        return response
-      })
-
-      .catch((error) => {
-        server.close()
-        throw error
-      })
-    })
+      return response
+    } finally {
+      server.close()
+    }
   }
 
   set (...args) {

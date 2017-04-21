@@ -1,16 +1,14 @@
 # test-client
 
-`test-client` is a small HTTP assertion library that uses promises, allowing
-tests to be written with[`co`][co] generators or `async`/`await`.
+`test-client` is a small HTTP assertion library.
 
 ```js
 'use strict'
 
-const co = require('co')
 const http = require('http')
 const Client = require('test-client')
 
-co(function *() {
+async function test () {
   const server = http.createServer((request, response) => {
     response.setHeader('content-type', 'application/json')
     response.end(JSON.stringify({x: 2}))
@@ -18,7 +16,7 @@ co(function *() {
 
   const client = new Client(server)
 
-  const response = yield client
+  const response = await client
     .get('/test')
     .type('json')
     .accept('json')
@@ -28,7 +26,7 @@ co(function *() {
   response
     .assert(200, {x: 2})
     .assert('content-type', /json/)
-})
+}
 ```
 
 # Install
@@ -137,7 +135,6 @@ Assert an HTTP header value. Returns the response.
 
 Assert an HTTP header matches a RegExp. Returns the response.
 
-[co]: https://github.com/tj/co
 [koa]: http://koajs.com/
 [express]: http://expressjs.com/
 [cookiejar]: https://github.com/bmeck/node-cookiejar
