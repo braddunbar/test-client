@@ -29,6 +29,7 @@ const send = (options, body) => new Promise((resolve, reject) => {
       resolve(new Response(statusCode, headers, body))
     })
   })
+
   request.on('error', reject)
 
   if (body instanceof Stream) {
