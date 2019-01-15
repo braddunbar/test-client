@@ -30,7 +30,12 @@ const send = (options, body) => new Promise((resolve, reject) => {
     })
   })
   request.on('error', reject)
-  body instanceof Stream ? body.pipe(request) : request.end(body)
+
+  if (body instanceof Stream) {
+    body.pipe(request)
+  } else {
+    request.end(body)
+  }
 })
 
 class Request {
