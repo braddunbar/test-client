@@ -22,7 +22,7 @@
     "tap": "12.1.1"
   },
   "dependencies": {
-    "cookiejar": "2.1.0",
+    "cookiejar": "2.1.2",
     "mime-types": "2.1.12"
   }
 }
