@@ -4,7 +4,7 @@ const tap = require('tap')
 const http = require('http')
 const Client = require('../')
 const Response = require('../response')
-const {Readable} = require('stream')
+const { Readable } = require('stream')
 
 tap.test('assert matching status', async (assert) => {
   const response = new Response(200, {}, '')
@@ -24,19 +24,19 @@ tap.test('assert missing header', async (assert) => {
 })
 
 tap.test('assert mismatched header', async (assert) => {
-  const response = new Response(200, {accept: 'text/html'}, '')
+  const response = new Response(200, { accept: 'text/html' }, '')
   assert.throws(() => {
     response.assert('accept', 'application/json')
   }, "expected 'accept' of 'application/json', got 'text/html'")
 })
 
 tap.test('assert matching header', async (assert) => {
-  const response = new Response(200, {accept: 'application/json'}, {})
+  const response = new Response(200, { accept: 'application/json' }, {})
   response.assert('accept', 'application/json')
 })
 
 tap.test('assert mixed case header', async (assert) => {
-  const response = new Response(200, {accept: 'application/json'}, {})
+  const response = new Response(200, { accept: 'application/json' }, {})
   response.assert('Accept', 'application/json')
 })
 
@@ -81,23 +81,23 @@ tap.test('assert status and mismatched regexp body', async (assert) => {
 })
 
 tap.test('assert matching regexp header', async (assert) => {
-  const response = new Response(200, {accept: 'application/json'}, {})
+  const response = new Response(200, { accept: 'application/json' }, {})
   response.assert('accept', /json/)
 })
 
 tap.test('assert mismatched regexp header', async (assert) => {
-  const response = new Response(200, {accept: 'text/html'}, '')
+  const response = new Response(200, { accept: 'text/html' }, '')
   assert.throws(() => { response.assert('accept', /json/) }, "expected 'accept' of 'text/html' to match /json/")
 })
 
 tap.test('assert matching json body', async (assert) => {
-  const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
-  response.assert({x: 1})
+  const response = new Response(200, { 'content-type': 'application/json' }, { x: 1 })
+  response.assert({ x: 1 })
 })
 
 tap.test('assert mismatched json body', async (assert) => {
-  const response = new Response(200, {'content-type': 'application/json'}, {x: 1})
-  assert.throws(() => { response.assert({x: 2}) }, 'expected { x: 2 }, got { x: 1 }')
+  const response = new Response(200, { 'content-type': 'application/json' }, { x: 1 })
+  assert.throws(() => { response.assert({ x: 2 }) }, 'expected { x: 2 }, got { x: 1 }')
 })
 
 tap.test('json body with invalid response', async (assert) => {
@@ -142,7 +142,7 @@ tap.test('#set accepts an object', async (assert) => {
   }))
   const response = await client
     .get('/x')
-    .set({accept: 'application/json'})
+    .set({ accept: 'application/json' })
     .send()
   assert.is(response.status, 200)
   assert.is(response.body, 'x')
@@ -171,7 +171,7 @@ tap.test('send a json body', async (assert) => {
     })
     assert.is(request.headers['content-type'], 'application/json; charset=utf-8')
   }))
-  const response = await client.post('/x').send({x: 1})
+  const response = await client.post('/x').send({ x: 1 })
   assert.is(response.status, 200)
 })
 

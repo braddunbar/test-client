@@ -4,7 +4,7 @@ const http = require('http')
 const Stream = require('stream')
 const mimeTypes = require('mime-types')
 const Response = require('./response')
-const {CookieAccessInfo} = require('cookiejar')
+const { CookieAccessInfo } = require('cookiejar')
 
 const listen = (app) => new Promise((resolve, reject) => {
   const server = app.listen()
@@ -15,7 +15,7 @@ const listen = (app) => new Promise((resolve, reject) => {
 const send = (options, body) => new Promise((resolve, reject) => {
   const request = http.request(options, (response) => {
     let body = ''
-    const {headers, statusCode} = response
+    const { headers, statusCode } = response
 
     response.on('data', (chunk) => {
       body += chunk.toString()
@@ -34,7 +34,6 @@ const send = (options, body) => new Promise((resolve, reject) => {
 })
 
 class Request {
-
   constructor (app, jar, path, method) {
     this.app = app
     this.jar = jar
@@ -57,7 +56,7 @@ class Request {
     const server = await listen(this.app)
 
     try {
-      const {family, port} = server.address()
+      const { family, port } = server.address()
       const response = await send({
         family: family === 'IPv6' ? 6 : 4,
         headers: this.headers,
@@ -96,7 +95,6 @@ class Request {
     this.set('content-type', mimeTypes.contentType(type))
     return this
   }
-
 }
 
 module.exports = Request

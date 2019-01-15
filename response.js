@@ -14,7 +14,6 @@ const inspect = (literals, ...values) => {
 }
 
 class Response {
-
   constructor (status, headers, body) {
     this.status = status
     this.headers = headers
@@ -58,7 +57,6 @@ class Response {
       assert.strictEqual(value, actual, inspect`expected ${key} of ${value}, got ${actual}`)
     }
   }
-
 }
 
 module.exports = Response
