@@ -18,8 +18,8 @@
   "author": "Brad Dunbar <dunbarb2@gmail.com> (http://braddunbar.net/)",
   "license": "ISC",
   "devDependencies": {
-    "standard": "12.0.1",
-    "tap": "12.1.1"
+    "standard": "13.0.1",
+    "tap": "14.4.1"
   },
   "dependencies": {
     "cookiejar": "2.1.2",
