@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "cookiejar": "2.1.2",
-    "mime-types": "2.1.21"
+    "mime-types": "2.1.21",
+    "node-fetch": "2.6.0"
   }
 }

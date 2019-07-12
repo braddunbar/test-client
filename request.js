@@ -1,9 +1,9 @@
 'use strict'
 
-const http = require('http')
 const Stream = require('stream')
-const mimeTypes = require('mime-types')
+const fetch = require('node-fetch')
 const Response = require('./response')
+const mimeTypes = require('mime-types')
 
 class Request {
   constructor (client, method, path) {
@@ -22,38 +22,22 @@ class Request {
     this.headers.cookie = this.client.cookie
 
     const server = await this.client.server()
-    const { family, port } = server.address()
+    const { port } = server.address()
 
     try {
-      const response = await new Promise((resolve, reject) => {
-        const request = http.request({
-          family: family === 'IPv6' ? 6 : 4,
-          headers: this.headers,
-          method: this.method,
-          path: this.path,
-          port
-        }, resolve)
-
-        request.on('error', reject)
-
-        if (body instanceof Stream) {
-          body.pipe(request)
-        } else {
-          request.end(body)
-        }
+      const response = await fetch(`http://localhost:${port}${this.path}`, {
+        body,
+        method: this.method,
+        headers: this.headers
       })
 
-      this.client.cookie = response.headers['set-cookie']
+      this.client.cookie = response.headers.get('set-cookie')
 
-      let data = Buffer.alloc(0)
-      for await (const chunk of response) data = Buffer.concat([data, chunk])
-      data = data.toString()
+      const data = /json/.test(response.headers.get('content-type'))
+        ? await response.json()
+        : await response.text()
 
-      if (/json/.test(response.headers['content-type'])) {
-        data = JSON.parse(data)
-      }
-
-      return new Response(response.statusCode, response.headers, data)
+      return new Response(response.status, response.headers, data)
     } finally {
       server.close()
     }

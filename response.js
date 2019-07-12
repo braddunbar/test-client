@@ -49,7 +49,7 @@ class Response {
   }
 
   assertHeader (key, value) {
-    const actual = this.headers[key.toLowerCase()]
+    const actual = this.headers.get(key.toLowerCase())
     if (value instanceof RegExp) {
       const message = inspect`expected ${key} of ${actual} to match ${value}`
       assert.ok(value.test(actual), message)
