@@ -101,6 +101,11 @@ tap.test('assert mismatched json body', async assert => {
   assert.throws(() => { response.assert({ x: 2 }) }, 'expected { x: 2 }, got { x: 1 }')
 })
 
+tap.test('assert with invalid arguments', async assert => {
+  const response = new Response(200, new Headers(), '')
+  assert.throws(() => { response.assert() }, 'Response#assert accepts one or two arguments')
+})
+
 tap.test('json body with invalid response', async assert => {
   const client = new Client(http.createServer((request, response) => {
     response.setHeader('content-type', 'application/json')
@@ -119,6 +124,13 @@ tap.test('send a request', async assert => {
   assert.is(response.status, 200)
   assert.is(response.body, 'x')
   assert.is(response.headers.get('content-type'), 'text/plain')
+})
+
+tap.test('set header with invalid arguments', async assert => {
+  const client = new Client(http.createServer((request, response) => {
+    response.end('')
+  }))
+  assert.throws(() => { client.get('/').set() }, 'Request#set accepts one or two arguments')
 })
 
 tap.test('set a header', async assert => {

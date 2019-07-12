@@ -13,7 +13,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "standard --fix && tap test/index.js"
+    "test": "standard --fix && tap --100 test/index.js"
   },
   "author": "Brad Dunbar <dunbarb2@gmail.com> (http://braddunbar.net/)",
   "license": "ISC",

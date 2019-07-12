@@ -47,11 +47,16 @@ class Request {
     if (args.length === 2) {
       const [key, value] = args
       this.headers[key] = value
-    } else if (args.length === 1) {
+      return this
+    }
+
+    if (args.length === 1) {
       const [headers] = args
       Object.assign(this.headers, headers)
+      return this
     }
-    return this
+
+    throw new Error('Request#set accepts one or two arguments')
   }
 
   accept (type) {

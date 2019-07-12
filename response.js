@@ -21,16 +21,26 @@ class Response {
   }
 
   assert (...args) {
-    if (typeof args[0] === 'number') {
-      this.assertStatus(args[0])
-      if (args.length > 1) this.assertBody(args[1])
-    } else if (args.length > 1) {
-      this.assertHeader(args[0], args[1])
-    } else if (args.length > 0) {
-      this.assertBody(args[0])
+    if (args.length === 1) {
+      if (typeof args[0] === 'number') {
+        this.assertStatus(args[0])
+      } else {
+        this.assertBody(args[0])
+      }
+      return this
     }
 
-    return this
+    if (args.length === 2) {
+      if (typeof args[0] === 'number') {
+        this.assertStatus(args[0])
+        this.assertBody(args[1])
+      } else {
+        this.assertHeader(args[0], args[1])
+      }
+      return this
+    }
+
+    throw new Error('Response#assert accepts one or two arguments')
   }
 
   assertBody (body) {
