@@ -2,6 +2,7 @@
 
 const assert = require('assert')
 const util = require('util')
+const { Headers } = require('node-fetch')
 
 // Template tag that inspects all values.
 const inspect = (literals, ...values) => {
@@ -14,9 +15,9 @@ const inspect = (literals, ...values) => {
 }
 
 class Response {
-  constructor (status, headers, body) {
+  constructor ({ status = 200, headers, body } = {}) {
     this.status = status
-    this.headers = headers
+    this.headers = headers instanceof Headers ? headers : new Headers(headers)
     this.body = body
   }
 

@@ -6,7 +6,7 @@ const Response = require('./response')
 const mimeTypes = require('mime-types')
 
 class Request {
-  constructor (client, method, path) {
+  constructor ({ client, method, path }) {
     this.client = client
     this.path = path
     this.method = method
@@ -21,7 +21,10 @@ class Request {
 
     this.headers.cookie = this.client.cookie
 
-    const server = await this.client.server()
+    const server = await new Promise((resolve, reject) => {
+      const server = this.client.app.listen(() => resolve(server))
+      server.on('error', reject)
+    })
     const { port } = server.address()
 
     try {
@@ -37,7 +40,11 @@ class Request {
         ? await response.json()
         : await response.text()
 
-      return new Response(response.status, response.headers, data)
+      return new Response({
+        status: response.status,
+        headers: response.headers,
+        body: data
+      })
     } finally {
       server.close()
     }

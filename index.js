@@ -10,15 +10,8 @@ class Client {
     this.jar = new CookieJar()
   }
 
-  request (method, path) {
-    return new Request(this, method, path)
-  }
-
-  async server () {
-    return new Promise((resolve, reject) => {
-      const server = this.app.listen(() => resolve(server))
-      server.on('error', reject)
-    })
+  request ({ method, path }) {
+    return new Request({ client: this, method, path })
   }
 
   get cookie () {
@@ -33,7 +26,7 @@ class Client {
 
 for (const method of http.METHODS) {
   Client.prototype[method.toLowerCase()] = function (path) {
-    return this.request(method, path)
+    return this.request({ method, path })
   }
 }
 
