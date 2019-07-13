@@ -1,6 +1,6 @@
 {
   "name": "test-client",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "HTTP assertions for node",
   "homepage": "https://github.com/braddunbar/test-client",
   "bugs": {
@@ -12,6 +12,9 @@
     "url": "https://github.com/braddunbar/test-client.git"
   },
   "main": "index.js",
+  "files": [
+    "/src"
+  ],
   "scripts": {
     "test": "standard --fix && tap --100 test/index.js"
   },

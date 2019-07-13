@@ -2,7 +2,7 @@
 
 const Stream = require('stream')
 const fetch = require('node-fetch')
-const Response = require('./response')
+const Response = require('./response.js')
 const mimeTypes = require('mime-types')
 
 class Request {

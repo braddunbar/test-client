@@ -2,8 +2,8 @@
 
 const tap = require('tap')
 const http = require('http')
-const Client = require('../')
-const Response = require('../response')
+const Client = require('../src/client.js')
+const Response = require('../src/response.js')
 const { Readable } = require('stream')
 
 tap.test('assert matching status: 200', async assert => {
