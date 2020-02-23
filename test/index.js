@@ -265,3 +265,15 @@ tap.test('remember cookies', async assert => {
   const get = await client.get('/get').send()
   get.assert(200)
 })
+
+tap.test('do not follow redirects', async assert => {
+  const client = new Client(http.createServer((request, response) => {
+    response.writeHead(302, {
+      location: 'https://nope.net/'
+    })
+    response.end()
+  }))
+  const response = await client.get('/').send()
+  response.assert(302)
+  response.assert('location', 'https://nope.net/')
+})

@@ -31,7 +31,8 @@ class Request {
       const response = await fetch(`http://localhost:${port}${this.path}`, {
         body,
         method: this.method,
-        headers: this.headers
+        headers: this.headers,
+        redirect: 'manual'
       })
 
       this.client.cookie = response.headers.get('set-cookie')
